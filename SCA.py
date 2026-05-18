@@ -176,7 +176,7 @@ if __name__ == "__main__":
     #-----------------------------------------------------------------------------------------------
 
     # Test de la DFT2D et IDFT2D
-    img = Image.open("babbon.png").convert("L") #Image sans pretraitement convertie en NB pour test simple
+    img = Image.open("/IMG InPut/babbon.png").convert("L") #Image sans pretraitement convertie en NB pour test simple
     IM = np.array(img, dtype=np.float64)
     S = DFT2D(IM)
 
@@ -203,7 +203,7 @@ if __name__ == "__main__":
     #-----------------------------------------------------------------------------------------------
     
     # --- 1. Chargement image ---
-    img = Image.open("babbon.png").convert("L")
+    img = Image.open("/IMG InPut/babbon.png").convert("L")
     IM = np.array(img, dtype=np.float64)
     M1, M2 = IM.shape  # taille originale (ex: 512×512)
  
