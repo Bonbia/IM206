@@ -51,7 +51,7 @@ def c_lanczos(n, M, a=3):
     dx = x[1] - x[0]
     n = np.asarray(n)
     phase = np.exp(-2j * np.pi * np.outer(n, x) / M)  
-    coeffs = (1.0 / M) * (phase @ phi_x) * dx
+    coeffs = (1.0 / M) * (phase @ phi_x) * dx  #Coef bizarres
     return coeffs.real if n.ndim > 0 else float(coeffs.real)
  
  
@@ -126,8 +126,6 @@ def Calc_coefs_FI(filter_name, M1, M2, N1, N2, z_range=3):
     c_phi = FILTERS[filter_name]
     n1 = np.arange(N1)
     n2 = np.arange(N2)
- 
-    # Somme sur z (repliements) — le terme z=0 est dominant
     weights1 = np.zeros(N1)
     weights2 = np.zeros(N2)
     for z in range(-z_range, z_range + 1):
@@ -210,6 +208,8 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     plt.show()
+    
+    
     #-----------------------------------------------------------------------------------------------
     # Test 2
     #-----------------------------------------------------------------------------------------------
@@ -264,7 +264,7 @@ if __name__ == "__main__":
     ax.grid(True, alpha=0.3)
     ax.set_xlim(-4.2, 4.2)
     ax.set_ylim(-0.3, 1.15)
- 
+
     # --- c_n(φ) ---
     ax = axes1[1]
     n_plot = np.linspace(-2 * M1, 2 * M1, 3000)
