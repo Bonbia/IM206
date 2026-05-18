@@ -5,5 +5,6 @@ Rendez-vous avec l'encadrent pour la suite du projet : code et choix pour la sui
 
 Semaine du 18 mai:
 Code :
-- rank transform
+- Rank transform (avec Test)
 - DFT et IDFT (avec Test)
+- Cross Validation (avec Test IA sans utilisation de la fonction NFA)
