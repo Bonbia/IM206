@@ -10,4 +10,5 @@ Code :
 - Mise en Place des Filtres d'interpolations
 - Cross Validation (avec Test IA sans utilisation de la fonction NFA)
 Questions : 
-Dans les tests avec la DFT et les Filtres d interpolations j'observe bien les pics qui sont semblables dans le spectre grace a la DFT2D mais lorsque j'utilise un filtre d'interpolation ces patchs semblables disparraissent ? (Probleme car pas utilisation des images residuelles ?)
+- Dans les tests avec la DFT et les Filtres d interpolations j'observe bien les pics qui sont semblables dans le spectre grace a la DFT2D mais lorsque j'utilise un filtre d'interpolation ces patchs semblables disparraissent ? (Probleme car pas utilisation des images residuelles ?)
+- Pour ce qui est du prétraitement et des autres étapes comment on traite le RGB ? 
