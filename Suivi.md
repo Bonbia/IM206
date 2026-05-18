@@ -6,4 +6,4 @@ Rendez-vous avec l'encadrent pour la suite du projet : code et choix pour la sui
 Semaine du 18 mai:
 Code :
 - rank transform
-- DFT
+- DFT et IDFT (avec Test)
