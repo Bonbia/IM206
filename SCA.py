@@ -3,11 +3,13 @@
 from PIL import Image
 import matplotlib.pyplot as plt
 import numpy as np
-
+import Pretraitement 
+    
 
 #-----------------------------------------------------------------------------------------------
 ### DFT2D/IFDT2D
 #-----------------------------------------------------------------------------------------------
+
 def DFT2D(IM):
     '''Implementation de la DFT2D sur l'image IM post traitée avec Rank ou TV '''
     spectre = np.fft.fft2(IM)
@@ -130,72 +132,81 @@ def Calc_coefs_FI(filter_name, M1, M2, N1, N2, z_range=3):
     weights2 = np.zeros(N2)
     for z in range(-z_range, z_range + 1):
         weights1 += c_phi(z * N1 + n1, M1)
-        weights2 += c_phi(z * N2 + n2, M2)
- 
-    # Produit tensoriel pour le cas 2D séparable
+        weights2 += c_phi(z * N2 + n2, M2) 
     C = np.outer(weights1, weights2)   # shape (N1, N2)
     return C
-    
-def apply_interpolating_filter_fourier(S_resampled, filter_name, M1, M2):
-    """
-    Applique les coefficients de Fourier du filtre d'interpolation
-    directement sur le spectre DFT d'une image rééchantillonnée.
- 
-    Paramètres
-    ----------
-    S_resampled : np.ndarray (complexe), shape (N1, N2)
-        DFT de l'image rééchantillonnée (taille de sortie).
-    filter_name : str
-        'nearest', 'linear', 'cubic' ou 'lanczos'.
-    M1, M2 : int
-        Taille originale (avant rééchantillonnage).
- 
-    Retour
-    ------
-    S_filtered : np.ndarray (complexe), shape (N1, N2)
-        Spectre divisé par les coefficients du filtre (égalisation spectrale).
-    C : np.ndarray (réel), shape (N1, N2)
-        Grille des coefficients c_n(phi).
-    """
-    N1, N2 = S_resampled.shape
+
+def Comp_Modulated_Spectrum(S, filter_name, M1, M2):
+    """Calcule le spectre modulé par les coefficients de Fourier du filtre d'interpolation"""
+    N1, N2 = S.shape
     C = Calc_coefs_FI(filter_name, M1, M2, N1, N2)
+    S_modulated = S * C
+    return S_modulated, C
+
+# def apply_interpolating_filter_fourier(S_resampled, filter_name, M1, M2):
+#     """
+#     Applique les coefficients de Fourier du filtre d'interpolation
+#     directement sur le spectre DFT d'une image rééchantillonnée.
  
-    # Évite la division par zéro
-    C_safe = np.where(np.abs(C) < 1e-10, 1e-10, C)
-    S_filtered = S_resampled / C_safe
+#     Paramètres
+#     ----------
+#     S_resampled : np.ndarray (complexe), shape (N1, N2)
+#         DFT de l'image rééchantillonnée (taille de sortie).
+#     filter_name : str
+#         'nearest', 'linear', 'cubic' ou 'lanczos'.
+#     M1, M2 : int
+#         Taille originale (avant rééchantillonnage).
  
-    return S_filtered, C
+#     Retour
+#     ------
+#     S_filtered : np.ndarray (complexe), shape (N1, N2)
+#         Spectre divisé par les coefficients du filtre (égalisation spectrale).
+#     C : np.ndarray (réel), shape (N1, N2)
+#         Grille des coefficients c_n(phi).
+#     """
+#     N1, N2 = S_resampled.shape
+#     C = Calc_coefs_FI(filter_name, M1, M2, N1, N2)
+ 
+#     # Évite la division par zéro
+#     C_safe = np.where(np.abs(C) < 1e-10, 1e-10, C)
+#     S_filtered = S_resampled / C_safe
+ 
+#     return S_filtered, C
 
 #-----------------------------------------------------------------------------------------------
 ### Test
 #-----------------------------------------------------------------------------------------------
 
-if __name__ == "__main__":
-    
+if __name__ == "__main__":   
     #-----------------------------------------------------------------------------------------------
     # Test 1 
     #-----------------------------------------------------------------------------------------------
 
     # Test de la DFT2D et IDFT2D
     img = Image.open("./IMG_InPut/babbon.png").convert("L") #Image sans pretraitement convertie en NB pour test simple
-    IM = np.array(img, dtype=np.float64)
-    S = DFT2D(IM)
+    IM = np.array(img, dtype=np.float32)
+    rankIM = Pretraitement.ranktransform(IM)
+    S = DFT2D(rankIM)
 
     # IDFT et garder la partie réelle
     IM_reconstructed = np.real(IDFT2D(S))
 
-    fig, axes = plt.subplots(1, 3, figsize=(18, 6))
+    fig, axes = plt.subplots(1, 4, figsize=(18, 6))
     axes[0].imshow(IM, cmap="gray")
     axes[0].set_title("Image originale (gris)")
     axes[0].axis("off")
 
-    axes[1].imshow(np.log(np.abs(np.fft.fftshift(S)) + 1), cmap="gray")
-    axes[1].set_title("Spectre (log magnitude)")
+    axes[1].imshow(rankIM, cmap="gray")
+    axes[1].set_title("Image transformée par rang")
     axes[1].axis("off")
 
-    axes[2].imshow(np.clip(IM_reconstructed, 0, 255).astype(np.uint8), cmap="gray")
-    axes[2].set_title("Image reconstruite")
+    axes[2].imshow(np.log(np.abs(np.fft.fftshift(S)) + 1), cmap="gray")
+    axes[2].set_title("Spectre (log magnitude)")
     axes[2].axis("off")
+
+    axes[3].imshow(np.clip(IM_reconstructed, 0, 255).astype(np.uint8), cmap="gray")
+    axes[3].set_title("Image reconstruite")
+    axes[3].axis("off")
 
     plt.tight_layout()
     plt.show()
@@ -224,7 +235,7 @@ if __name__ == "__main__":
         img_r = img.resize((N2, N1), PIL_RESAMPLE[name])
         IM_r  = np.array(img_r, dtype=np.float64)
         S_r   = DFT2D(IM_r)
-        S_eq, C = apply_interpolating_filter_fourier(S_r, name, M1, M2)
+        S_eq, C = Comp_Modulated_Spectrum(S_r, name, M1, M2)
         resampled[name]   = IM_r
         spectra[name]     = S_r
         coeffs_2d[name]   = C
