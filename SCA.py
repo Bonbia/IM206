@@ -16,15 +16,15 @@ def IDFT2D(S):
 
 
 if __name__ == "__main__":
+    
     # Test de la DFT2D et IDFT2D
-    img = Image.open("babbon.png").convert("L")
+    img = Image.open("babbon.png").convert("L") #Image sans pretraitement convertie en NB pour test simple
     IM = np.array(img, dtype=np.float64)
     S = DFT2D(IM)
 
     # IDFT et garder la partie réelle
     IM_reconstructed = np.real(IDFT2D(S))
 
-    # Afficher l'image originale, le spectre et la reconstruction
     fig, axes = plt.subplots(1, 3, figsize=(18, 6))
     axes[0].imshow(IM, cmap="gray")
     axes[0].set_title("Image originale (gris)")
