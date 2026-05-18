@@ -171,12 +171,13 @@ def apply_interpolating_filter_fourier(S_resampled, filter_name, M1, M2):
 #-----------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
+    
     #-----------------------------------------------------------------------------------------------
     # Test 1 
     #-----------------------------------------------------------------------------------------------
 
     # Test de la DFT2D et IDFT2D
-    img = Image.open("/IMG InPut/babbon.png").convert("L") #Image sans pretraitement convertie en NB pour test simple
+    img = Image.open("./IMG_InPut/babbon.png").convert("L") #Image sans pretraitement convertie en NB pour test simple
     IM = np.array(img, dtype=np.float64)
     S = DFT2D(IM)
 
@@ -203,7 +204,7 @@ if __name__ == "__main__":
     #-----------------------------------------------------------------------------------------------
     
     # --- 1. Chargement image ---
-    img = Image.open("/IMG InPut/babbon.png").convert("L")
+    img = Image.open("./IMG_InPut/babbon.png").convert("L")
     IM = np.array(img, dtype=np.float64)
     M1, M2 = IM.shape  # taille originale (ex: 512×512)
  
@@ -333,7 +334,6 @@ if __name__ == "__main__":
         plt.colorbar(im, ax=axes3[col], fraction=0.046, pad=0.04)
  
     plt.tight_layout()
-    plt.savefig("filtres_coeffs_2d.png", dpi=150, bbox_inches="tight")
  
     plt.show()
     
