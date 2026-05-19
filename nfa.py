@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 from scipy.stats import binom
-
+from Prétraitement import ranktransform
 PATCH_SIZE = 8
 R = 1
-DMAX = 40
+DMAX = 500
 EPSILON = 10
 step = PATCH_SIZE
 
