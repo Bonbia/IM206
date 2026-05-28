@@ -124,13 +124,14 @@ def Calc_coefs_FI(filter_name, M1, M2, N1, N2, z_range=3):
     if filter_name not in FILTERS:
         raise ValueError(f"Filtre inconnu: {filter_name}. Choisissez parmi {list(FILTERS.keys())}")
     c_phi = FILTERS[filter_name]
-    n1 = np.arange(N1)
-    n2 = np.arange(N2)
+    n1 = np.arange(-(N1 // 2), N1 - N1 // 2)   # longueur N1
+    n2 = np.arange(-(N2 // 2), N2 - N2 // 2)   # longueur N2
+ 
     weights1 = np.zeros(N1)
     weights2 = np.zeros(N2)
     for z in range(-z_range, z_range + 1):
         weights1 += c_phi(z * N1 + n1, M1)
-        weights2 += c_phi(z * N2 + n2, M2) 
+        weights2 += c_phi(z * N2 + n2, M2)
     C = np.outer(weights1, weights2)   # shape (N1, N2)
     return C
 
@@ -317,6 +318,11 @@ if __name__ == "__main__":
  
         # Ligne 2 : spectre après égalisation
         S_eq_shift = np.fft.fftshift(spectra_eq[name])
+        S_eq_log = np.log(np.abs(S_eq_shift) + 1)
+        S_eq_log_norm = S_eq_log / (S_eq_log.max() + 1e-10)
+        print(f"{LABELS[name]} - Max log magnitude: {S_eq_log.max()}")
+        axes2[2, col].imshow(S_eq_log_norm, cmap="inferno")
+        axes2[2, col].axis("off")
         axes2[2, col].imshow(np.log(np.abs(S_eq_shift) + 1), cmap="inferno")
         axes2[2, col].axis("off")
  
