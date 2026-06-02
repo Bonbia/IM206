@@ -1,0 +1,6 @@
+crop: null
+direction: h
+input: img/baboon.png
+is_jpeg: false
+out_folder: results
+preproc: rt
