@@ -24,7 +24,6 @@ def _vendor_src_root():
     """Return the path to vendor/GIT_PROF so `import src.ird` works."""
     return os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
-        "IM206",
         "vendor",
         "GIT_PROF",
     )
