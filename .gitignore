@@ -1,2 +1,11 @@
 *.pyc
 */synthbuster
+IMG_InPut/
+vendor/GIT_PROF/IMG_InPut/
+vendor/GIT_PROF/img/
+vendor/GIT_PROF/nos_tests/baboon_*.png
+*.DNG
+!vendor/GIT_PROF/nos_tests/results/
+!vendor/GIT_PROF/nos_tests/results/**
+!vendor/GIT_PROF/results/
+!vendor/GIT_PROF/results/**

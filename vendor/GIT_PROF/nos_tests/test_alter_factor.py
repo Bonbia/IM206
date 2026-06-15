@@ -20,17 +20,19 @@ def retailler(img, taille):
 
 
 base = charger_image(os.path.join(ROOT, "img/img2.png"))
-print(f"shape base : {base.shape}")  # hauteur x largeur
+print(f"shape base : {base.shape}")
 taille_base = base.shape[1]
-facteurs = [1.09, 1.20, 1.50, 2]  
+facteurs = [1.09, 1.20, 1.50, 2]
 
 images = [
     (base, "original", 1.0, None),
 ] + [
     (retailler(base, int(taille_base * f)), f"x{f:.2f}", f, None)
     for f in facteurs
-    if f > 1.0  
+    if f > 1.0
 ]
+
+SEUIL = -5
 
 print(f"{'image':<25} {'d*':>5} {'k estimé':>10} {'k réel':>10} {'erreur':>8} {'log NFA':>9}")
 print("-" * 75)
@@ -47,21 +49,16 @@ for img, nom, vrai_k, vrai_d in images:
 
     log_nfa = np.log10(nfa + 1e-50)
 
-    # cherche les pics significatifs
-    pics = []
-    for d in range(1, len(log_nfa)):
-        if log_nfa[d] < -5 and d <= largeur // 2:
-            pics.append(d)
+    # premier pic significatif en partant de d=1
+    meilleur_d = None
+    for d in range(1, largeur // 2):
+        if log_nfa[d] < SEUIL:
+            meilleur_d = d
+            break
 
-    if len(pics) == 0:
+    if meilleur_d is None:
         print(f"{nom:<25} {'—':>5} {'—':>10} {vrai_k:>10.4f} {'—':>8} {'—':>9}")
         continue
-
-    # meilleur pic = celui avec le plus petit log_nfa
-    meilleur_d = pics[0]
-    for d in pics:
-        if log_nfa[d] < log_nfa[meilleur_d]:
-            meilleur_d = d
 
     k      = largeur / (largeur - meilleur_d)
     erreur = abs(k - vrai_k)
