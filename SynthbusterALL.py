@@ -12,7 +12,6 @@ def cross_difference(img_array):
 from collections import Counter
 
 def compute_avg_fft_raw(image_paths):
-    # 1. Trouver la taille la plus fréquente
     sizes = []
     for p in image_paths:
         with Image.open(p) as img:
@@ -23,7 +22,6 @@ def compute_avg_fft_raw(image_paths):
     n_kept = sizes.count(most_common_size)
     print(f"  → Taille dominante : {most_common_size} ({n_kept}/{n_total} images conservées)")
 
-    # 2. N'accumuler que les images de cette taille
     accum = None
     count = 0
     for p in image_paths:
@@ -47,7 +45,6 @@ def compute_avg_fft_raw(image_paths):
     mag_dilated = grey_dilation(mag_shift, size=5)
     return mag_dilated
 
-# Nom du dossier → label affiché
 models = {
     "stable-diffusion-1-3": "Stable Diffusion 1.3",
     "stable-diffusion-1-4": "Stable Diffusion 1.4",
@@ -88,7 +85,6 @@ for i, (folder, label) in enumerate(models.items()):
     ax.set_title(label, fontsize=10)
     ax.axis("off")
 
-# Masquer les axes vides si n_models < n_rows * n_cols
 for j in range(n_models, len(axes)):
     axes[j].axis("off")
 
