@@ -1,11 +1,3 @@
-"""
-Comparaison des deux prétraitements :
-  - Rank Transform  → importé depuis Pretraitement.py
-  - Résidu TV       → importé depuis TV.py
-
-Les deux fichiers doivent se trouver dans le même répertoire que ce script,
-ou être accessibles via le PYTHONPATH.
-"""
 
 import sys
 import os
