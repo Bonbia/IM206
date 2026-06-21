@@ -6,10 +6,6 @@ import numpy as np
 import Pretraitement 
     
 
-#-----------------------------------------------------------------------------------------------
-### DFT2D/IFDT2D
-#-----------------------------------------------------------------------------------------------
-
 def DFT2D(IM):
     '''Implementation de la DFT2D sur l'image IM post traitée avec Rank ou TV '''
     spectre = np.fft.fft2(IM)
@@ -20,10 +16,6 @@ def IDFT2D(S):
     image = np.fft.ifft2(S)
     return image 
 
-
-#-----------------------------------------------------------------------------------------------
-### Interpolating Filter
-#-----------------------------------------------------------------------------------------------
 
 def c_nearest(n, M):
     """Plus proche voisin """
@@ -115,10 +107,6 @@ LABELS = {
 }
  
 
-#-----------------------------------------------------------------------------------------------
-### Calcul des coefs avec le Filtre d'interpolation choisi
-#-----------------------------------------------------------------------------------------------
-
 def Calc_coefs_FI(filter_name, M1, M2, N1, N2, z_range=3):
     """Calcul des Coefficients de Fourier avec le filtre d'interpolation"""
     if filter_name not in FILTERS:
@@ -141,40 +129,6 @@ def Comp_Modulated_Spectrum(S, filter_name, M1, M2):
     C = Calc_coefs_FI(filter_name, M1, M2, N1, N2)
     S_modulated = S * C
     return S_modulated, C
-
-# def apply_interpolating_filter_fourier(S_resampled, filter_name, M1, M2):
-#     """
-#     Applique les coefficients de Fourier du filtre d'interpolation
-#     directement sur le spectre DFT d'une image rééchantillonnée.
- 
-#     Paramètres
-#     ----------
-#     S_resampled : np.ndarray (complexe), shape (N1, N2)
-#         DFT de l'image rééchantillonnée (taille de sortie).
-#     filter_name : str
-#         'nearest', 'linear', 'cubic' ou 'lanczos'.
-#     M1, M2 : int
-#         Taille originale (avant rééchantillonnage).
- 
-#     Retour
-#     ------
-#     S_filtered : np.ndarray (complexe), shape (N1, N2)
-#         Spectre divisé par les coefficients du filtre (égalisation spectrale).
-#     C : np.ndarray (réel), shape (N1, N2)
-#         Grille des coefficients c_n(phi).
-#     """
-#     N1, N2 = S_resampled.shape
-#     C = Calc_coefs_FI(filter_name, M1, M2, N1, N2)
- 
-#     # Évite la division par zéro
-#     C_safe = np.where(np.abs(C) < 1e-10, 1e-10, C)
-#     S_filtered = S_resampled / C_safe
- 
-#     return S_filtered, C
-
-#-----------------------------------------------------------------------------------------------
-### Test
-#-----------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":   
     #-----------------------------------------------------------------------------------------------
@@ -290,9 +244,6 @@ if __name__ == "__main__":
  
     plt.tight_layout()
  
-    # -----------------------------------------------------------------------
-    # Figure 2 : pour chaque filtre — image rééchantillonnée + spectre + égalisé
-    # -----------------------------------------------------------------------
     fig2, axes2 = plt.subplots(3, n_filters, figsize=(5 * n_filters, 13))
     fig2.suptitle(f"Comparaison des 4 filtres d'interpolation\n"
                   f"Image originale {M1}×{M2} → {N1}×{N2} (facteur {scale})",
@@ -337,9 +288,6 @@ if __name__ == "__main__":
  
     plt.tight_layout()
  
-    # -----------------------------------------------------------------------
-    # Figure 3 : coefficients 2D c_n(φ) pour chaque filtre
-    # -----------------------------------------------------------------------
     fig3, axes3 = plt.subplots(1, n_filters, figsize=(5 * n_filters, 5))
     fig3.suptitle("Grille 2D des coefficients de Fourier c_n(φ) par filtre", fontsize=13)
  

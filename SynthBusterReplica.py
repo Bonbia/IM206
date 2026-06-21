@@ -28,26 +28,51 @@ def compute_avg_fft_raw(image_paths):
     mag_dilated = grey_dilation(mag_shift, size=5)
     return mag_dilated  # brut, sans log
 
-paths = list(Path("./synthbuster/synthbuster/stable-diffusion-1-3").glob("*.png"))
-mag_raw = compute_avg_fft_raw(paths)
 
-# Percentiles à tester : de 90% à 100% avec pas variable
-percentiles = [90, 92, 94, 95, 96, 97, 98, 99, 99.5, 99.9]
+def show_cross_difference(image_path):
+    img = np.array(Image.open(image_path).convert("RGB")).astype(float)
+    print(f"Image shape : {img.shape}")
 
-n = len(percentiles)
-fig, axes = plt.subplots(2, 5, figsize=(25, 10))
-axes = axes.flatten()
+    cd = cross_difference(img)                        
+    cd_gray = cd.mean(axis=2)                         
+    print(f"Cross-diff shape : {cd.shape}, max={cd.max():.2f}")
+    CLIP_PERCENTILE = 99.5
 
-for i, p in enumerate(percentiles):
-    vmax = np.percentile(mag_raw, p)
-    # On clippe les valeurs au-dessus du seuil, PUIS on applique le log
-    mag_clipped = np.clip(mag_raw, 0, vmax)
-    mag_log = np.log1p(mag_clipped)
+    fft = np.fft.fft2(cd_gray)
+    mag = np.abs(fft) / cd_gray.size                  
+    mag_shift = np.fft.fftshift(mag)     
+    vmax = np.percentile(mag_shift, CLIP_PERCENTILE)   
+    mag_clipped = np.clip(mag_shift, 0, vmax)          
+    mag_log = np.log1p(mag_clipped)                     
+    mag_dilated = grey_dilation(mag_shift, size=5)    
 
-    axes[i].imshow(mag_log, cmap="inferno")
-    axes[i].set_title(f"Clip {p}% → log\nvmax={vmax:.2e}", fontsize=9)
-    axes[i].axis("off")
+    fig, axes = plt.subplots(1, 4, figsize=(18, 4))
 
-plt.suptitle("Stable Diffusion 1.3 — clip puis log", fontsize=13)
-plt.tight_layout()
-plt.show()
+    axes[0].imshow(img.astype(np.uint8))
+    axes[0].set_title("Image originale")
+    axes[0].axis("off")
+
+    axes[1].imshow(cd_gray, cmap="gray")
+    axes[1].set_title("Cross-difference (niveaux de gris)")
+    axes[1].axis("off")
+
+    axes[2].imshow(mag_log, cmap="inferno")
+    axes[2].set_title("Spectre FFT (log) de la CD avec clipping")
+    axes[2].axis("off")
+
+    axes[3].imshow(np.log1p(mag_dilated), cmap="inferno")
+    axes[3].set_title("Spectre dilaté (log)")
+    axes[3].axis("off")
+
+    plt.suptitle(Path(image_path).name, fontsize=12)
+    plt.tight_layout()
+    plt.savefig("cross_difference_result.png", dpi=150, bbox_inches="tight")
+    plt.show()
+    print("Sauvegardé : cross_difference_result.png")
+
+
+if __name__ == "__main__":
+    image_path = "./synthbuster/synthbuster/stable-diffusion-1-3/r000da54ft.png"
+    show_cross_difference(image_path)
+    
+    
