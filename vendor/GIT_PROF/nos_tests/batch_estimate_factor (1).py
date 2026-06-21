@@ -30,7 +30,7 @@ images_fichiers = sorted([
     if os.path.splitext(f)[1].lower() in extensions
 ])
 
-facteurs = [1.09, 1.20, 1.50, 2]
+facteurs = [1.09, 1.20, 1.50, 2,2.5,3,4]
 
 for chemin in images_fichiers:
     nom_fichier = os.path.basename(chemin)

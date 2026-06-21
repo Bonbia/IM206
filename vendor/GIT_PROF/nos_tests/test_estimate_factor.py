@@ -13,16 +13,17 @@ def charger_image(chemin):
     img = imageio.imread(chemin)
     return rgb2luminance(img.astype(np.float32))
 
-
-def retailler(img, taille):
+def retailler(img, facteur):
+    h, w = img.shape[:2]
+    nouvelle_largeur = int(w * facteur)
     pil = Image.fromarray(img.astype(np.uint8))
-    return np.array(pil.resize((taille, taille), Image.BICUBIC)).astype(np.float32)
+    img_grande = np.array(pil.resize((nouvelle_largeur, h), Image.NEAREST)).astype(np.float32)
+    return img_grande[:, :w]
 
-
-base = charger_image(os.path.join(ROOT, "img/img2.png"))
+base = charger_image(os.path.join(ROOT, "img/png_light/r5a671b67t.png"))
 print(f"shape base : {base.shape}")  # hauteur x largeur
 taille_base = base.shape[1]
-facteurs = [1.09, 1.20, 1.50, 2]  
+facteurs = [1.09, 1.20, 1.50,1.6,1.8,1.9,2]  
 
 images = [
     (base, "original", 1.0, None),
@@ -39,12 +40,11 @@ for img, nom, vrai_k, vrai_d in images:
     largeur = img.shape[1]
 
     nfa = detect_resampling(
-        img, preproc="rt", preproc_param={"rt_size": 3},
-        window_ratio=0.10, nb_neighbor=20,
-        direction="horizontal", is_jpeg=False, is_demosaic=False,
-        max_distance=largeur - 1
-    )
-
+            img, preproc="rt", preproc_param={"rt_size": 3},
+            window_ratio=0.10, nb_neighbor=20,
+            direction="horizontal", is_jpeg=False, is_demosaic=False,
+            max_distance=min(largeur - 1, 500)
+        )
     log_nfa = np.log10(nfa + 1e-50)
 
     # cherche les pics significatifs
