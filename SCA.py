@@ -131,10 +131,7 @@ def Comp_Modulated_Spectrum(S, filter_name, M1, M2):
     return S_modulated, C
 
 if __name__ == "__main__":   
-    #-----------------------------------------------------------------------------------------------
-    # Test 1 
-    #-----------------------------------------------------------------------------------------------
-
+ 
     # Test de la DFT2D et IDFT2D
     img = Image.open("./IMG_InPut/babbon.png").convert("L") #Image sans pretraitement convertie en NB pour test simple
     IM = np.array(img, dtype=np.float32)
@@ -163,18 +160,12 @@ if __name__ == "__main__":
 
     plt.tight_layout()
     plt.show()
-    
-    
-    #-----------------------------------------------------------------------------------------------
-    # Test 2
-    #-----------------------------------------------------------------------------------------------
-    
-    # --- 1. Chargement image ---
+
+    #  Second test 
     img = Image.open("./IMG_InPut/babbon.png").convert("L")
     IM = np.array(img, dtype=np.float64)
     M1, M2 = IM.shape  # taille originale (ex: 512×512)
  
-    # --- 2. Rééchantillonnage avec chaque filtre (downscale 80%) ---
     scale = 0.8
     N1, N2 = int(M1 * scale), int(M2 * scale)
  
@@ -196,16 +187,12 @@ if __name__ == "__main__":
         coeffs_2d[name]   = C
         spectra_eq[name]  = S_eq
  
-    # -----------------------------------------------------------------------
-    # Figure 1 : φ(x) spatial  +  c_n(φ) Fourier  (reproduction Fig. 3 papier)
-    # -----------------------------------------------------------------------
     x_vals = np.linspace(-4, 4, 2000)
     n_vals = np.arange(-2 * M1, 2 * M1 + 1)
  
     fig1, axes1 = plt.subplots(1, 2, figsize=(14, 5))
     fig1.suptitle("Filtres d'interpolation φ — domaine spatial et fréquentiel\n(reproduction Fig. 3 du papier)", fontsize=13)
  
-    # --- φ(x) ---
     ax = axes1[0]
     for name in filter_names:
         y = SPATIAL_FILTERS[name](x_vals)
@@ -220,7 +207,6 @@ if __name__ == "__main__":
     ax.set_xlim(-4.2, 4.2)
     ax.set_ylim(-0.3, 1.15)
 
-    # --- c_n(φ) ---
     ax = axes1[1]
     n_plot = np.linspace(-2 * M1, 2 * M1, 3000)
     for name in filter_names:
@@ -256,18 +242,15 @@ if __name__ == "__main__":
     ]
  
     for col, name in enumerate(filter_names):
-        # Ligne 0 : image rééchantillonnée
         axes2[0, col].imshow(resampled[name], cmap="gray")
         axes2[0, col].set_title(f"{LABELS[name]}", fontsize=12, fontweight="bold",
                                  color=COLORS[name])
         axes2[0, col].axis("off")
  
-        # Ligne 1 : spectre DFT
         S_shift = np.fft.fftshift(spectra[name])
         axes2[1, col].imshow(np.log(np.abs(S_shift) + 1), cmap="inferno")
         axes2[1, col].axis("off")
  
-        # Ligne 2 : spectre après égalisation
         S_eq_shift = np.fft.fftshift(spectra_eq[name])
         S_eq_log = np.log(np.abs(S_eq_shift) + 1)
         S_eq_log_norm = S_eq_log / (S_eq_log.max() + 1e-10)
@@ -277,7 +260,6 @@ if __name__ == "__main__":
         axes2[2, col].imshow(np.log(np.abs(S_eq_shift) + 1), cmap="inferno")
         axes2[2, col].axis("off")
  
-    # Titres de lignes à gauche
     for row, title in enumerate(row_titles):
         axes2[row, 0].set_ylabel(title, fontsize=10, labelpad=8)
         axes2[row, 0].axis("on")
